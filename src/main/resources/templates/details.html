@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo Details</title>
+</head>
+<body>
+<h1>Todo Details</h1>
+<p>Task: <span th:text="${todo.task}"></span></p>
+<p>Description: <span th:text="${todo.description}"></span></p>
+<p>Done: <span th:text="${todo.isDone}"></span></p>
+<p>Created At: <span th:text="${todo.createdAt}"></span></p>
+<a th:href="@{/todo}">Back to Todo List</a>
+</body>
+</html>

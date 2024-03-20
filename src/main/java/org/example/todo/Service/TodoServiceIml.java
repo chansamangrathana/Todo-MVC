@@ -1,19 +1,22 @@
 package org.example.todo.Service;
 
-import lombok.RequiredArgsConstructor;
 import org.example.todo.Model.Todo;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
-public class TodoServiceImpl implements TodoService {
+public class TodoServiceIml implements TodoService{
+    private List<Todo> todoList;
 
-    private final List<Todo> todoList;
+    public void TodoServiceImpl() {
+        this.todoList = new ArrayList<>();
+    }
+
+    public TodoServiceIml(List<Todo> todoList) {
+        this.todoList = todoList;
+    }
 
     @Override
     public List<Todo> getAllTodos() {
@@ -24,7 +27,8 @@ public class TodoServiceImpl implements TodoService {
     public Todo getTodoById(Long id) {
         return todoList.stream()
                 .filter(todo -> todo.getId()==id)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -36,12 +40,12 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public void updateTodo(Long id, Todo updatedTodo) {
-        Optional<Todo> existingTodo = Optional.ofNullable(getTodoById(id));
-        existingTodo.ifPresent(todo -> {
+        Todo todo = getTodoById(id);
+        if (todo != null) {
             todo.setTask(updatedTodo.getTask());
             todo.setDescription(updatedTodo.getDescription());
             todo.setDone(updatedTodo.isDone());
-        });
+        }
     }
 
     @Override
@@ -51,9 +55,7 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public List<Todo> searchTodos(String task, Boolean isDone) {
-        return todoList.stream()
-                .filter(todo -> (task == null || todo.getTask().contains(task))
-                        && (isDone == null || todo.isDone() == isDone))
-                .collect(Collectors.toList());
+            return todoList.stream().filter(todo-> todo.getTask().contains(task) && todo.isDone() == isDone)
+                    .collect(Collectors.toList());
     }
 }
