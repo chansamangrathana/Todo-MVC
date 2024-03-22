@@ -1,20 +1,102 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>Add Todo</title>
+    <link href="/css/styles.css" rel="stylesheet">
 </head>
+<style>
+    .container {
+    width: 50%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #730577;
+    border-radius: 20px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.form {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    margin-left: 2px;
+    color: #1a0707;
+    font-weight: bold;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #3e0850;
+    border-radius: 4px;
+    outline: none;
+}
+
+.form-checkbox {
+    margin-left: 3px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.button-secondary {
+    background-color: purple;
+    color: white;
+    margin-right: 20px;
+}
+
+.button-primary {
+    background-color: purple;
+    color: white;
+}
+</style>
 <body>
-<h1>Add Todo</h1>
-<form th:action="@{/todo/new}" th:object="${todo}" method="post">
-    <label for="task">Task:</label>
-    <input type="text" id="task" name="task" th:field="*{task}" required><br>
-    <label for="description">Description:</label>
-    <input type="text" id="description" name="description" th:field="*{description}" required><br>
-    <label for="isDone">Done:</label>
-    <input type="checkbox" id="isDone" name="isDone" th:field="*{done}"><br>
-    <button type="submit">Add Todo</button>
-</form>
-<a th:href="@{/todo}">Cancel</a>
+<div class="container">
+    <h1 class="title">Add Todo</h1>
+    <form th:action="@{/todo/new}" method="post" th:object="${todo}" class="form">
+        <div class="form-group">
+            <label for="task">Task</label>
+            <input id="task" type="text" placeholder="Enter task" name="task" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="Enter description" name="description" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="isDone">IsDone</label>
+            <input type="checkbox" id="isDone" name="isDone" class="form-checkbox">
+        </div>
+
+        <div class="button-group">
+            <a href="/todo" class="button button-secondary">Cancel</a>
+            <button class="button button-primary" type="submit">Add Todo</button>
+        </div>
+    </form>
+</div>
 </body>
 </html>

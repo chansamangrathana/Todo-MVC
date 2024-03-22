@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Todo List</title>
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Styles */
+.header {
+    background-color: #f9fafb;
+    padding: 1rem;
+    text-align: center;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Main Styles */
+.main {
+    padding: 1rem;
+}
+
+.navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+
+}
+
+.search-input,
+.search-select {
+    padding: 0.5rem;
+    border: 1px solid #3e0850;
+    border-radius: 10px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+
+
+
+
+
+}
+
+.table th,
+.table td {
+    border: 1px solid #3e0850;
+    padding: 0.5rem;
+}
+
+
+.button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #efe5e5;
+    text-align: center;
+}
+
+.button-green {
+    background-color: #3e0850;
+}
+
+.button-blue {
+    background-color: #3e0850;
+}
+
+
+.link {
+    color: #013e77;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+}
+
+.link-red {
+    color: #e53e3e;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+
+}
+</style>
+<body>
+<header class="header">
+    <h1 class="title">Todo List</h1>
+</header>
+<main class="main">
+    <div class="navigation">
+        <a href="/todo" class="button button-green">Back</a>
+        <a href="/todo/new" class="button button-blue">Add New </a>
+        <form id="searchForm" class="search-form" action="/todo/search" method="get">
+            <input type="text" name="task" placeholder="Search by task" class="search-input">
+            <select name="isDone" class="search-select">
+                <option value="">All</option>
+                <option value="true">Done</option>
+                <option value="false">Not Done</option>
+            </select>
+            <button type="submit" class="button button-blue">Search</button>
+        </form>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Task</th>
+            <th>Description</th>
+            <th>Is Done</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="todo : ${todos}">
+            <td th:text="${todo.id}"></td>
+            <td th:text="${todo.task}"></td>
+            <td th:text="${todo.description}"></td>
+            <td>
+                <input type="checkbox" th:checked="${todo.isDone}" disabled>
+            </td>
+            <td th:text="${todo.createdAt}"></td>
+            <td>
+                <button th:href="@{/todo/edit/{id}(id=${todo.id})}" class="link">Edit</button>
+
+                <form action="/todo/delete/{id}" method="post" th:action="@{/todo/delete/{id}(id=${todo.id})}" class="form">
+                    <button type="submit" class="link link-red">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+</body>
+</html>

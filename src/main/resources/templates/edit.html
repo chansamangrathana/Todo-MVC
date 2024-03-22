@@ -1,93 +1,106 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>Edit Todo</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        form {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"],
-        input[type="checkbox"],
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-
-        input[type="checkbox"] {
-            width: auto;
-        }
-
-        button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        a {
-            display: inline-block;
-            color: #007bff;
-            text-decoration: none;
-            margin-top: 10px;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link href="/css/styles.css" rel="stylesheet">
 </head>
+<style>
+    .container {
+        width: 50%;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        border: 1px solid #730577;
+        border-radius: 20px;
+        margin: 0 auto;
+    }
+
+    .title {
+        font-size: 25px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .form {
+        width: 100%;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        margin-left: 2px;
+        color: #1a0707;
+        font-weight: bold;
+    }
+
+    input,
+    textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #3e0850;
+        border-radius: 4px;
+        outline: none;
+    }
+
+    .form-checkbox {
+        margin-left: 3px;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .button {
+        padding: 10px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .button-secondary {
+        background-color: purple;
+        color: white;
+        margin-right: 20px;
+    }
+
+    .button-primary {
+        background-color: purple;
+        color: white;
+}
+</style>
 <body>
 <div class="container">
-    <h1>Edit Todo</h1>
-    <form th:action="@{/todo/edit/{id}(id=${todo.id})}" th:object="${todo}" method="post">
-        <input type="hidden" th:field="*{id}">
-        <label for="task">Task:</label>
-        <input type="text" id="task" name="task" th:field="*{task}" required><br>
-        <label for="description">Description:</label>
-        <input type="text" id="description" name="description" th:field="*{description}" required><br>
-        <label for="isDone">Done:</label>
-        <input type="checkbox" id="isDone" name="isDone" th:field="*{isDone}"><br>
-        <button type="submit">Update Todo</button>
+    <h1 class="title">Edit Todo</h1>
+
+    <form th:action="@{/todo/edit/{id}(id=${todo.id})}" th:object="${todo}" method="post" class="form">
+        <input type="hidden" th:name="_method" th:value="put" />
+        <input type="hidden" th:name="id" th:value="*{id}" />
+        <div class="form-group">
+            <label for="task">Task</label>
+            <input class="input" id="task" type="text" placeholder="Enter task" name="task" required th:value="*{task}">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="textarea" id="description" placeholder="Enter description" name="description" required th:text="*{description}"></textarea>
+        </div>
+        <div class="form-group">
+            <label class="checkbox-label" for="isDone">IsDone</label>
+            <input type="checkbox" class="checkbox" id="isDone" name="isDone" th:checked="*{isDone}" onclick="updateCheckbox()">
+            <input type="hidden" id="isDoneHidden" name="isDone" value="false">
+        </div>
+
+        <div class="button-group">
+            <a href="/todo" class="button button-secondary">Cancel</a>
+            <button class="button button-primary" type="submit">Update Todo</button>
+        </div>
     </form>
-    <a th:href="@{/todo}">Cancel</a>
 </div>
 </body>
 </html>

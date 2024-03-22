@@ -1,99 +1,81 @@
 package org.example.todo.Controller;
-
-import ch.qos.logback.core.model.Model;
-import lombok.RequiredArgsConstructor;
+//import app.springmvc.model.Todo;
+//import app.springmvc.service.TodoService;
 import org.example.todo.Model.Todo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+import org.example.todo.Service.TodoService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-
 @Controller
-@RequiredArgsConstructor
+@RequestMapping("/todo")
 public class TodoController {
-    @Autowired
-    private List<Todo> TodoService;
 
-    @GetMapping("/todo")
-    public String todoList(Model model) {
-        model.addText("todos");
-        return "todo-list";
+    private final TodoService todoService;
+
+    public TodoController(TodoService todoService) {
+
+        this.todoService = todoService;
     }
 
-    @GetMapping("/todo/{id}")
-    public String getTodoById(@PathVariable Long id, Model model) {
-        Todo todo = TodoService.stream()
-                .filter(t -> t.getId()==id)
-                .findFirst()
-                .orElse(null);
-        if (todo == null) {
-            return "redirect:/todo";
-        }
-        model.addText("todo");
-        return "todo-details";
+    @GetMapping("")
+    public String getAllTodos(Model model) {
+        List<Todo> todos = todoService.getAllTodos();
+        model.addAttribute("todos", todos);
+        return "index";
     }
 
-    @GetMapping("/todo/new")
-    public String showAddTodoForm(Model model) {
-        model.addText("todo");
-        return "add-todo";
+    @GetMapping("/new")
+    public String addTodoForm(Model model) {
+        model.addAttribute("todo", new Todo());
+        return "add";
     }
 
-    @PostMapping("/todo/new")
-    public String addTodo(@ModelAttribute Todo todo) {
-        todo.setId(System.currentTimeMillis()); // Assign a unique ID
-        todo.setCreatedAt(LocalDateTime.now()); // Set creation timestamp
-        TodoService.add(todo);
+    @PostMapping("/new")
+    public String addTodoSubmit(@ModelAttribute Todo todo) {
+        todoService.addTodo(todo);
         return "redirect:/todo";
     }
 
-    @GetMapping("/todo/edit/{id}")
-    public String showEditTodoForm(@PathVariable Long id, Model model) {
-        Todo todo = TodoService.stream()
-                .filter(t -> t.getId()==id)
-                .findFirst()
-                .orElse(null);
-        if (todo == null) {
-            return "redirect:/todo";
-        }
-        model.addText("todo");
-        return "edit-todo";
+    @GetMapping("/edit/{id}")
+    public String editTodoForm(@PathVariable Long id, Model model) {
+        Todo todo = todoService.getTodoById(id);
+        model.addAttribute("todo", todo);
+        return "edit";
     }
 
-    @PostMapping("/todo/edit/{id}")
-    public String editTodo(@PathVariable Long id, @ModelAttribute Todo updatedTodo) {
-        Todo todo = TodoService.stream()
-                .filter(t -> t.getId()==id)
-                .findFirst()
-                .orElse(null);
-        if (todo == null) {
-            return "redirect:/todo";
-        }
-        todo.setTask(updatedTodo.getTask());
-        todo.setDescription(updatedTodo.getDescription());
-        todo.setDone(updatedTodo.isDone());
+    @PostMapping("/edit/{id}")
+    public String editTodoSubmit(@ModelAttribute Todo todo) {
+        todoService.updateTodo(todo);
         return "redirect:/todo";
     }
 
-    @GetMapping("/todo/delete/{id}")
-    public String deleteTodo(@PathVariable Long id) {
-        TodoService.removeIf(todo -> todo.getId()==id);
+    @PostMapping("/delete/{id}")
+    public String deleteTodoById(@PathVariable int id) {
+        todoService.deleteTodoById(id);
         return "redirect:/todo";
     }
 
-    @GetMapping("/todo/search")
-    public String searchTodo(@RequestParam(required = false) String task,
-                             @RequestParam(required = false) Boolean isDone,
-                             Model model) {
-        List<Todo> searchResults = TodoService.stream()
-                .filter(todo -> (task == null || todo.getTask().contains(task))
-                        && (isDone == null || todo.isDone() == isDone))
-                .collect(Collectors.toList());
-        model.addText("todos");
-        return "todo-list";
+    @GetMapping("/search")
+    public String searchTodos(@RequestParam(required = false) String task,
+                              @RequestParam(required = false) Boolean Done,
+                              Model model) {
+        List<Todo> todos;
+        if (task == null || task.isEmpty()) {
+            if (Done != null) {
+                todos = todoService.searchTodosByIsDone(Done);
+            } else {
+                todos = todoService.getAllTodos();
+            }
+        } else {
+            if (Done != null) {
+                todos = todoService.searchTodosByTaskContainingAndIsDone(task, Done);
+            } else {
+                todos = todoService.searchTodosByTaskContaining(task);
+            }
+        }
+        model.addAttribute("todos", todos);
+        return "index";
     }
 }
